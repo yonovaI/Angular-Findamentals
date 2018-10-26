@@ -12,6 +12,8 @@ import { EventDetailsComponent } from './events/event-details/event-detail.compo
 import { appRoutes } from './routes';
 import { RouterModule } from '@angular/router';
 import { CreaEvetComponent } from './events/create-event.component';
+import { Error404Component } from './errors/404.component';
+import { EventRouteActivator } from './events/event-details/event-route-activator.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +22,8 @@ import { CreaEvetComponent } from './events/create-event.component';
     EventThumbnailComponent,
     NavBarComponent,
     EventDetailsComponent,
-    CreaEvetComponent
+    CreaEvetComponent,
+    Error404Component
   ],
   imports: [
     BrowserModule,
@@ -28,8 +31,20 @@ import { CreaEvetComponent } from './events/create-event.component';
   ],
   providers: [
     EventService,
-    ToastrService
+    ToastrService,
+    EventRouteActivator,
+    {
+      provide: 'canDeactivateCreateEvent', 
+      useValue: checkDirtyState
+    }
+
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export function checkDirtyState(component: CreaEvetComponent) {
+  if(component.isDirty)
+    return window.confirm('Are you sure you want to cancel?');
+  return true;
+}
